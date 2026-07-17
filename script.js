@@ -56,7 +56,8 @@ window.likePost = async function(postId) {
 window.addComment = async function(postId) {
 
   const commentBox = document.getElementById("comment" + postId);
-
+const nameBox = document.getElementById("name" + postId);
+const commenterName = nameBox.value.trim();
   const comment = commentBox.value.trim();
 
   if(comment === "") {
@@ -74,7 +75,11 @@ window.addComment = async function(postId) {
 
     await updateDoc(postRef, {
 
-      comments: arrayUnion(comment)
+      comments: arrayUnion({
+  name: commenterName,
+  text: comment,
+  time: new Date().toLocaleString()
+})
 
     });
 
