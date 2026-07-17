@@ -136,7 +136,11 @@ async function loadPosts(){
 
           const p = document.createElement("p");
 
-          p.textContent = "💬 " + comment;
+          p.innerHTML = `
+<strong>👤 ${comment.name}</strong><br>
+<small>🕒 ${comment.time}</small><br>
+💬 ${comment.text}
+`;
 
           commentsBox.appendChild(p);
 
