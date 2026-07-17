@@ -58,6 +58,10 @@ window.addComment = async function(postId) {
   const commentBox = document.getElementById("comment" + postId);
 const nameBox = document.getElementById("name" + postId);
 const commenterName = nameBox.value.trim();
+  if(commenterName === ""){
+  alert("Please enter your name before commenting");
+  return;
+  }
   const comment = commentBox.value.trim();
 
   if(comment === "") {
@@ -136,11 +140,21 @@ async function loadPosts(){
 
           const p = document.createElement("p");
 
-          p.innerHTML = `
-<strong>👤 ${comment.name}</strong><br>
-<small>🕒 ${comment.time}</small><br>
-💬 ${comment.text}
-`;
+          if(typeof comment === "string") {
+
+  p.innerHTML = `
+  💬 ${comment}
+  `;
+
+} else {
+
+  p.innerHTML = `
+  <strong>👤 ${comment.name}</strong><br>
+  <small>🕒 ${comment.time}</small><br>
+  💬 ${comment.text}
+  `;
+
+          }
 
           commentsBox.appendChild(p);
 
