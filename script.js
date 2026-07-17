@@ -1,35 +1,149 @@
-let likes = [0, 0, 0];
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+import { 
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  arrayUnion
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
-function likePost(post) {
-    likes[post]++;
-    document.getElementById("like" + post).textContent = likes[post];
-}
+const firebaseConfig = {
+  apiKey: "AIzaSyBKS-GvEQkd5scVyAhejnossKhEHJtGGio",
+  authDomain: "sandalex-hub.firebaseapp.com",
+  projectId: "sandalex-hub",
+  storageBucket: "sandalex-hub.firebasestorage.app",
+  messagingSenderId: "362037061596",
+  appId: "1:362037061596:web:e5c84e98616ddc18251119",
+  measurementId: "G-P07B3V13J6"
+};
 
-function sharePost() {
-    if (navigator.share) {
-        navigator.share({
-            title: "SANDALEX HUB",
-            text: "Check out this article on SANDALEX HUB!",
-            url: window.location.href
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+// LIKE FUNCTION
+window.likePost = async function(postId) {
+
+  const postRef = doc(db, "posts", "post" + postId);
+
+  const postSnap = await getDoc(postRef);
+
+  if (postSnap.exists()) {
+
+    let currentLikes = postSnap.data().likes || 0;
+
+    await updateDoc(postRef, {
+      likes: currentLikes + 1
+    });
+
+  } else {
+
+    await setDoc(postRef, {
+      likes: 1,
+      comments: []
+    });
+
+  }
+
+  const updatedSnap = await getDoc(postRef);
+
+  document.getElementById("like" + postId).textContent =
+  updatedSnap.data().likes;
+
+};
+
+
+// COMMENT FUNCTION
+window.addComment = async function(postId) {
+
+  const commentBox = document.getElementById("comment" + postId);
+
+  const comment = commentBox.value.trim();
+
+  if(comment === "") {
+    alert("Please write a comment");
+    return;
+  }
+
+
+  const postRef = doc(db, "posts", "post" + postId);
+
+  const postSnap = await getDoc(postRef);
+
+
+  if(postSnap.exists()) {
+
+    await updateDoc(postRef, {
+
+      comments: arrayUnion(comment)
+
+    });
+
+
+  } else {
+
+
+    await setDoc(postRef, {
+
+      likes: 0,
+      comments: [comment]
+
+    });
+
+  }
+
+
+  commentBox.value = "";
+
+  alert("Comment posted successfully");
+
+};
+// LOAD SAVED DATA
+async function loadPosts(){
+
+  for(let i = 0; i < 3; i++){
+
+    const postRef = doc(db, "posts", "post" + i);
+
+    const postSnap = await getDoc(postRef);
+
+
+    if(postSnap.exists()){
+
+      const data = postSnap.data();
+
+
+      // Show likes
+      const likeElement = document.getElementById("like" + i);
+
+      if(likeElement){
+        likeElement.textContent = data.likes || 0;
+      }
+
+
+      // Show comments
+      const commentsBox = document.getElementById("comments" + i);
+
+      if(commentsBox && data.comments){
+
+        commentsBox.innerHTML = "";
+
+        data.comments.forEach(function(comment){
+
+          const p = document.createElement("p");
+
+          p.textContent = "💬 " + comment;
+
+          commentsBox.appendChild(p);
+
         });
-    } else {
-        alert("Sharing is not supported on this device.");
-    }
-}
 
-function addComment(post) {
-    const textarea = document.getElementById("comment" + post);
-    const comment = textarea.value.trim();
+      }
 
-    if (comment === "") {
-        alert("Please enter a comment.");
-        return;
     }
 
-    const commentsDiv = document.getElementById("comments" + post);
-    const p = document.createElement("p");
-    p.textContent = "💬 " + comment;
+  }
 
-    commentsDiv.appendChild(p);
-    textarea.value = "";
 }
+
+
+loadPosts();
