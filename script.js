@@ -155,10 +155,20 @@ async function loadPosts(){
 } else {
 
   p.innerHTML = `
-  <strong>👤 ${comment.name}</strong><br>
-  <small>🕒 ${comment.time}</small><br>
-  💬 ${comment.text}
-  `;
+<strong>👤 ${comment.name}</strong><br>
+<small>🕒 ${comment.time}</small><br>
+💬 ${comment.text}
+`;
+
+if (adminMode) {
+
+    const del = document.createElement("button");
+
+    del.textContent = "🗑 Delete";
+
+    p.appendChild(del);
+
+}
 
           }
 
@@ -180,3 +190,46 @@ if (counter) {
 
 
 loadPosts();
+window.adminMode = false;
+
+window.adminLogin = function () {
+
+    const password = prompt("Enter Admin Password");
+
+    if (password === "isaacalexis") {
+
+        adminMode = true;
+
+        alert("Admin mode activated.");
+
+        loadPosts();
+
+    } else {
+
+        alert("Wrong password.");
+
+    }
+
+};
+
+window.adminMode = false;
+
+window.adminLogin = function () {
+
+    const password = prompt("Enter Admin Password");
+
+    if (password === "Sandra123") {
+
+        adminMode = true;
+
+        alert("Admin mode activated.");
+
+        loadPosts();
+
+    } else {
+
+        alert("Wrong password.");
+
+    }
+
+};
