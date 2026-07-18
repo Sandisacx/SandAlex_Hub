@@ -22,7 +22,12 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 // LIKE FUNCTION
 window.likePost = async function(postId) {
+const likeKey = "liked_post_" + postId;
 
+if (localStorage.getItem(likeKey)) {
+    alert("You have already liked this post.");
+    return;
+}
   const postRef = doc(db, "posts", "post" + postId);
 
   const postSnap = await getDoc(postRef);
@@ -48,6 +53,7 @@ window.likePost = async function(postId) {
 
   document.getElementById("like" + postId).textContent =
   updatedSnap.data().likes;
+  localStorage.setItem(likeKey, "true");
 
 };
 
