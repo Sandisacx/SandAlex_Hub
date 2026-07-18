@@ -165,7 +165,11 @@ async function loadPosts(){
           commentsBox.appendChild(p);
 
         });
+const counter = document.getElementById("commentCount" + i);
 
+if (counter) {
+    counter.textContent = "Comments (" + data.comments.length + ")";
+                                        }
       }
 
     }
